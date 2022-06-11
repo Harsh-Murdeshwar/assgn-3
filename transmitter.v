@@ -10,7 +10,7 @@ initial begin
     
 end
 
-always #1 clk=~clk;
+always #104166 clk=~clk;
 
 always @(clk) begin
 
@@ -28,7 +28,6 @@ always @(clk) begin
     else if (i==9) begin
         i<=0;
         temp<=1;
-        #1;
     end
 end
 
