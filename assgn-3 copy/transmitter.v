@@ -10,7 +10,7 @@ initial begin
     
 end
 
-always #104166 clk=~clk;
+always #1666656 clk=~clk;
 
 always @(clk) begin
 
