@@ -1,33 +1,45 @@
 `timescale 1ps/1ps
-module transmitter (input [7:0] bus , output data);
+module transmitter (input [7:0] bus , input clk , input tick_in , input rd_en , output data);
 
-reg clk;
 integer i=0;
 assign data=temp;
 reg temp;
+wire tick;
+reg start;
+reg [4:0] counter;
+
+assign tick = tick_in & start;
+
 initial begin
-    clk<=0;
-    
+    start<=0;
+    temp<=1;
+    counter<=0;
 end
 
-always #1666656 clk=~clk;
+always @ (negedge rd_en) begin
+    start<=1;
+    temp<=0;
+end
 
-always @(clk) begin
+always @(posedge tick) begin
 
-    if (bus=== 8'bxxxxxxxx) temp<=1;
-
-    else if (i==0) begin
-        temp<=0;
-        i<=i+1;
+    if (counter < 8) begin
+        counter<=counter+1;
     end
 
-    else if (i>=1 && i<=8) begin
-        temp<=bus[i-1];
+    else begin
+
+    if (i>=0 && i<=7) begin
+        temp<=bus[i];
         i<=i+1;
+        counter<=0;
     end
-    else if (i==9) begin
+    else if (i==8) begin
         i<=0;
         temp<=1;
+        start<=0;
+        counter<=0;
+    end
     end
 end
 

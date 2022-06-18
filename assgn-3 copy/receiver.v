@@ -21,11 +21,12 @@ reg read;
 initial begin
     ander <= 1;
     init <= 0;
-    counter <= 1;
+    counter <= 0;
     bitno <= 0;
     tickstart <= 0;
     read <= 1;
     trigger <= 1;
+    dr<= 0;
 end
 
 assign sig = dcom & ander;
@@ -35,11 +36,11 @@ always @ (negedge sig) begin
     ander <= 0;
     tickstart <= 1;
     read <= 1;
-    trigger <= ~trigger;
+    //trigger <= ~trigger;
 end
 
 always @ (posedge tick) begin
-    if(counter == 16) begin
+    if(counter == 8) begin
         trigger <= ~trigger;
     end
     else begin
@@ -52,28 +53,29 @@ always @ (trigger) begin
 
     else begin
 
-        if(bitno == 0) begin
-            bitno <= bitno +1;
-        end
-        else begin
-            dr <= ((dr)|(dcom<<(bitno-1)));
+        // if(bitno == 0) begin
+        //     bitno <= bitno +1;
+        // end
+        // else begin
+        if(bitno != 8) begin
+            dr <= ((dr)|(dcom<<(bitno)));
             bitno <= bitno +1;
         end
 
-        counter <= 1;
+        counter <= 0;
         if(bitno == 8) begin
             bitno <= 0;
             read <= 0;
             ander <= 1;
         end
     end
-
+end
 always @ (clk) begin
     if(read == 0) begin
         bus <= dr;
         read <= 1;
+        dr<= 0;
+        tickstart<=0;
     end
-end
-
 end
 endmodule
